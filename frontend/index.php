@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>SaftLaden</title>
+    <title>Saft Laden</title>
 
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
@@ -33,7 +33,7 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="?page=cover">
-                        SaftLaden
+                        Saft Laden
                     </a>
                 </div>
 

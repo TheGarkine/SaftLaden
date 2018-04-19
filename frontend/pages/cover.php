@@ -71,7 +71,7 @@
 <header class="flex-center position-ref full-height" style="background: url('img/background.jpg'); background-size: cover; background-attachment: fixed;">
     <div class="content">
         <div class="title m-b-md">
-            SaftLaden
+            Saft Laden
         </div>
 
         <div class="links">
