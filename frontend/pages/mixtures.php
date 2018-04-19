@@ -68,10 +68,18 @@
                 }
                 ?>
 
-                <input type="range" id="juice_ratio-input" name="juice_ratio" min="0" max="100" value="<?php echo $ratioVal; ?>" />
+                <input type="range" class="form-control" id="juice_ratio-input" name="juice_ratio" min="0" max="100" value="<?php echo $ratioVal; ?>" />
             </div>
         </div>
 
+    </div>
+    <div class="row">
+        <div id="glass1-output" class="col-sm-4 col-xs-6 col-sm-offset-3 text-center">
+            50%
+        </div>
+        <div id="glass2-output" class="col-sm-4 col-xs-6 col-sm-offset-1 text-center">
+            50%
+        </div>
     </div>
     <div class="row">
         <div class="col-sm-4 col-xs-6 col-sm-offset-3">
@@ -119,7 +127,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-9 col-sm-offset-3">
+        <div class="col-sm-3 col-sm-offset-6 text-center">
         <?php
             if (count($_POST)) {
             ?>
@@ -129,6 +137,9 @@
         <?php
             }
             ?>
+
+            <object id="glass-mixed" data="img/glass.svg" type="image/svg+xml" style="transform: scale(0.8);">
+            </object>
 
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">
@@ -141,6 +152,26 @@
 </div>
 
 <script>
+    function hexToRgb(hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})?$/i.exec(hex);
+        
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16),
+            a: ((result.length > 5) ? parseInt(result[4], 16) : 255)
+        } : null;
+    }
+
+    function rgbToHex(rgba) {
+        function componentToHex(c) {
+            var hex = c.toString(16);
+            return ((hex.length == 1) ? ("0" + hex) : hex)
+        }
+
+        return "#" + componentToHex(rgba.r) + componentToHex(rgba.g) + componentToHex(rgba.b) + (rgba.a ? componentToHex(rgba.a) : '');
+    }
+
     function glassById(id) {
         return document.getElementById(id).contentDocument;
     }
@@ -173,6 +204,18 @@
 
         setGlassColor(glassById('glass1'), color1);
         setGlassColor(glassById('glass2'), color2);
+
+        color1 = hexToRgb(color1);
+        color2 = hexToRgb(color2);
+
+        var mixedColor = {
+            r: Math.round((color1.r + color2.r) / 2),
+            g: Math.round((color1.g + color2.g) / 2),
+            b: Math.round((color1.b + color2.b) / 2),
+            a: Math.round((color1.a + color2.a) / 2),
+        }
+
+        setGlassColor(glassById('glass-mixed'), rgbToHex(mixedColor));
     }
 
     window.addEventListener('load', function() {
@@ -189,6 +232,7 @@
                     $('#juice2-input').val(result.data.juices[1].id);
                     
                     updateGlasses();
+                    updateOutput();
                 }
             });
         }
@@ -199,6 +243,11 @@
             updateGlassColors();
         }
 
+        function updateOutput() {
+            $('#glass1-output').html($('#juice_ratio-input').val() + '%');
+            $('#glass2-output').html((100 - $('#juice_ratio-input').val()) + '%');
+        }
+
         $('#glass-input').on('change', () => {
             updateForm();
         });
@@ -207,6 +256,7 @@
 
         $('#juice_ratio-input').on('input', () => {
             updateGlasses();
+            updateOutput();
         });
 
         $('#juice1-input').on('input', () => {
