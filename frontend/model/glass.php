@@ -38,10 +38,14 @@
                 $this->juices = [];
 
                 $mixtures = MixtureJuice::allByGlass($this->rfid);
-
+                
                 foreach ($mixtures as $mixture) {
                     $this->ratios[] = $mixture['ratio'] * 1;
-                    $this->juices[] = $mixture['juice_id'] * 1;
+                    $this->juices[] = [
+                        'id' => $mixture['juice_id'] * 1,
+                        'color' => $mixture['color'],
+                        'ratio' => $mixture['ratio'] * 1,
+                    ];
                 }
                 
                 return true;

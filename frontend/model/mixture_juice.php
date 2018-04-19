@@ -90,7 +90,9 @@
             global $pdo;
 
             $stmt = $pdo->prepare("
-                SELECT * FROM `mixture_juices` WHERE `mixture_id`=:glass
+                SELECT * FROM `mixture_juices` AS m
+                    LEFT JOIN `juices` AS j ON m.juice_id = j.id
+                WHERE `mixture_id`=:glass
             ");
 
             $stmt->bindParam(':glass', $id);

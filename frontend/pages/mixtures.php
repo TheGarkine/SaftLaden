@@ -44,7 +44,7 @@
             <?php
                 foreach (Glass::all() as $glass) {
                     echo '<option value="' . $glass['rfid'] . '"'.
-                        ((isset($_GET['glass']) && $_GET['glass'] == $glass['rfid']) ? ' selected' : '') . 
+                        ((isset($_POST['glass']) && $_POST['glass'] == $glass['rfid']) ? ' selected' : '') . 
                         '>' . $glass['rfid'] . ' (' . $glass['volume'] . 'ml)</option>';
                 }
                 ?>
@@ -97,7 +97,7 @@
                     {
                         echo '<option value="' . $juice['id'] . '"'
                              . ($_POST['juice1'] == $juice['id'] ? ' selected' : '')
-                             . '>' . $juice['name'] . '</option>';
+                             . ' data-color="' . $juice['color'] . '">' . $juice['name'] . '</option>';
                     }
                     ?>
                 </select>
@@ -111,7 +111,7 @@
                     {
                         echo '<option value="' . $juice['id'] . '"'
                         . ($_POST['juice2'] == $juice['id'] ? ' selected' : '')
-                        . '>' . $juice['name'] . '</option>';
+                        . ' data-color="' . $juice['color'] . '">' . $juice['name'] . '</option>';
                     }
                     ?>
                 </select>
@@ -164,20 +164,30 @@
         });
     }
 
+    function updateGlassColors() {
+        var colorId1 = $('#juice1-input').val();
+        var colorId2 = $('#juice2-input').val();
+
+        var color1 = $('#juice1-input > [value=' + colorId1 + ']').attr('data-color');
+        var color2 = $('#juice2-input > [value=' + colorId2 + ']').attr('data-color');
+
+        setGlassColor(glassById('glass1'), color1);
+        setGlassColor(glassById('glass2'), color2);
+    }
+
     window.addEventListener('load', function() {
         function updateForm() {
             $.getJSON('api.php?model=glass&id=' + $("#glass-input").val(), (result) => {
                 if (result.type == 'ok') {
                     if (result.data.mixtures.length > 0) {
-                        $('#juice_ratio-input').val(result.data.mixtures[0]/*.ratio[0]*/ * 100);
+                        $('#juice_ratio-input').val(result.data.juices[0].ratio * 100);
                     } else {
                         $('#juice_ratio-input').val(50);
                     }
 
-                    console.log(result.data.juices);
-                    $('#juice1-input').val(result.data.juices[0]);
-                    $('#juice2-input').val(result.data.juices[1]);
-
+                    $('#juice1-input').val(result.data.juices[0].id);
+                    $('#juice2-input').val(result.data.juices[1].id);
+                    
                     updateGlasses();
                 }
             });
@@ -186,6 +196,7 @@
         function updateGlasses() {
             setGlassValue(glassById('glass1'), $('#juice_ratio-input').val());
             setGlassValue(glassById('glass2'), 100 - $('#juice_ratio-input').val());
+            updateGlassColors();
         }
 
         $('#glass-input').on('change', () => {
@@ -195,6 +206,14 @@
         updateForm();
 
         $('#juice_ratio-input').on('input', () => {
+            updateGlasses();
+        });
+
+        $('#juice1-input').on('input', () => {
+            updateGlasses();
+        });
+
+        $('#juice2-input').on('input', () => {
             updateGlasses();
         });
     });
