@@ -4,30 +4,24 @@
         public $rfid = 0;
         public $volume = 0;
 
-        private $_ratio = [];
+        public $ratios = [];
+        public $juices = [];
 
         function serialize() {
             return json_encode([
-                'rfid' => $this->rfid,
-                'volume' => $this->volume,
-                'mixtures' => $this->_ratio ? [['juice_ratio' => $this->_ratio]] : [],
+                'rfid' => $this->rfid * 1,
+                'volume' => $this->volume * 1,
+                'mixtures' => $this->ratios,
+                'juices' => $this->juices,
             ]);
         }
 
         function deserialize($obj) {
             if (isset($obj['rfid']))
-                $this->rfid = (int)$obj['rfid'];
+                $this->rfid = $obj['rfid'];
             
             if (isset($obj['volume']))
-                $this->volume = (int)($obj['volume']);
-            
-            if (isset($obj['juice_ratio'])) {
-                if (is_array($obj['juice_ratio'])) {
-                    $this->_ratio = $obj['juice_ratio'];
-                } else {
-                    $this->_ratio = json_decode($obj['juice_ratio']);
-                }
-            }
+                $this->volume = $obj['volume'];
         }
 
         function load() {
@@ -39,6 +33,17 @@
 
             if ($obj = $this->loadStmt->fetch()) {
                 $this->deserialize($obj);
+
+                $this->ratios = [];
+                $this->juices = [];
+
+                $mixtures = MixtureJuice::allByGlass($this->rfid);
+
+                foreach ($mixtures as $mixture) {
+                    $this->ratios[] = $mixture['ratio'] * 1;
+                    $this->juices[] = $mixture['juice_id'] * 1;
+                }
+                
                 return true;
             }
             
@@ -68,7 +73,7 @@
 
             $this->loadStmt = $pdo->prepare("
                 SELECT * FROM `glasses`
-                    LEFT JOIN `mixtures` ON `mixtures`.`glass`=`glasses`.`rfid`
+                    LEFT JOIN `mixtures` ON `mixtures`.`id`=`glasses`.`rfid`
                 WHERE `rfid`=:rfid;
             ");
         }

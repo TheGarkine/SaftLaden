@@ -75,8 +75,8 @@
         </div>
 
         <div class="links">
-            <a href="?page=create">Mischung kreieren</a>
-            <a href="?page=configure">Glas konfigurieren</a>
+            <a href="?page=mixtures">Mischung kreieren</a>
+            <a href="?page=glasses">Glas konfigurieren</a>
         </div>
     </div>
 </header>

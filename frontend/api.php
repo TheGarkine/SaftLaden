@@ -11,6 +11,8 @@
         }
 
         require_once('model/glass.php');
+        require_once('model/mixture.php');
+        require_once('model/mixture_juice.php');
         
         $glass = new Glass();
         $glass->rfid = $_GET['id'];
@@ -18,6 +20,8 @@
         if (!$glass->load()) {
             die('{"type": "error", "text": "Invalid id."}');
         }
+
+        $glass->serialize();
 
         die('{"type": "ok", "data": ' . $glass->serialize() . '}');
 
