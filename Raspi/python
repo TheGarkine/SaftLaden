@@ -1,0 +1,12 @@
+import RPi.GPIO as GPIO
+import MFRC522
+import signal
+
+continue_reading = True
+
+while continue_reading:
+	(status,TagType) = MIFARER.MFRC522_Request(MIFAREReader.PICC_REQIDL)
+
+	(status,uid) = MIFAREReader.MFRC522_Anticoll()
+	if status == MIFAREReader.MI_OK:
+		
